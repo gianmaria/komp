@@ -39,7 +39,7 @@ int compress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-    cout << "compressing " << input_file << " to " << output_file << endl;
+    cout << "compressing '" << input_file << "' to '" << output_file << "'" << endl;
 
     auto compressed = WinCppCrypt::Util::compress(input_file_content.data(), input_file_content.size());
 
@@ -58,7 +58,7 @@ int compress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-    cout << "original size  : " << input_file_content.size() << " bytes" << endl;
+    cout << "original size: " << input_file_content.size() << " bytes" << endl;
     cout << "compressed size: " << compressed.size() << " bytes" << endl;
     float c = compressed.size();
     float d = input_file_content.size();
@@ -89,7 +89,7 @@ int decompress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-    cout << "decompressing " << input_file << " to " << output_file << endl;
+    cout << "decompressing '" << input_file << "' to '" << output_file << "'" << endl;
 
     auto decompressed = WinCppCrypt::Util::decompress(compressed_file_content.data(), compressed_file_content.size());
 
@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
         if (argc != 4)
         {
             cerr << "Usage:" << endl
-                << "    komp (-c|-d) <input_file> <output_file>" << endl;
+                << "    komp [-c|-d] <input_file> <output_file>" << endl;
 
             return 1;
         }
