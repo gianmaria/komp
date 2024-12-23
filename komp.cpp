@@ -27,13 +27,6 @@ int compress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-    ofstream ofs(output_file, std::ios::binary);
-    if (!ofs)
-    {
-        cerr << "Error: cannot open output file '" << output_file << "'" << endl;
-        return 1;
-    }
-
     auto input_file_size = fs::file_size(input_file);
 
     vector<char> input_file_content(input_file_size);
@@ -49,6 +42,13 @@ int compress_file(const string& input_file, const string& output_file)
     cout << "compressing " << input_file << " to " << output_file << endl;
 
     auto compressed = WinCppCrypt::Util::compress(input_file_content.data(), input_file_content.size());
+
+    ofstream ofs(output_file, std::ios::binary);
+    if (!ofs)
+    {
+        cerr << "Error: cannot open output file '" << output_file << "'" << endl;
+        return 1;
+    }
 
     ofs.write(reinterpret_cast<char*>(compressed.data()), compressed.size());
 
@@ -77,13 +77,6 @@ int decompress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-    ofstream ofs(output_file, std::ios::binary);
-    if (!ofs)
-    {
-        cerr << "Error: cannot open output file '" << output_file << "'" << endl;
-        return 1;
-    }
-
     auto input_file_size = fs::file_size(input_file);
 
     vector<char> compressed_file_content(input_file_size);
@@ -99,6 +92,13 @@ int decompress_file(const string& input_file, const string& output_file)
     cout << "decompressing " << input_file << " to " << output_file << endl;
 
     auto decompressed = WinCppCrypt::Util::decompress(compressed_file_content.data(), compressed_file_content.size());
+
+    ofstream ofs(output_file, std::ios::binary);
+    if (!ofs)
+    {
+        cerr << "Error: cannot open output file '" << output_file << "'" << endl;
+        return 1;
+    }
 
     ofs.write(reinterpret_cast<char*>(decompressed.data()), decompressed.size());
 
