@@ -69,6 +69,49 @@ int compress_file(const string& input_file, const string& output_file)
     return 0;
 }
 
+int decompress_file(const string& input_file, const string& output_file)
+{
+    ifstream ifs(input_file, std::ios::binary);
+    if (!ifs)
+    {
+        cerr << "Error: cannot open input file '" << input_file << "'" << endl;
+        return 1;
+    }
+
+    ofstream ofs(output_file, std::ios::binary);
+    if (!ofs)
+    {
+        cerr << "Error: cannot open output file '" << output_file << "'" << endl;
+        return 1;
+    }
+
+    auto input_file_size = fs::file_size(input_file);
+
+    vector<char> buffer(input_file_size);
+
+    ifs.read(buffer.data(), buffer.size());
+
+    if (not ifs.good())
+    {
+        cerr << "Error: only " << ifs.gcount() << " bytes could be read from " << input_file << endl;
+        return 1;
+    }
+
+    cout << "decompressing " << input_file << " to " << output_file << endl;
+
+    auto decompressed = WinCppCrypt::Util::decompress(buffer.data(), buffer.size());
+
+    ofs.write(reinterpret_cast<char*>(decompressed.data()), decompressed.size());
+
+    if (not ofs.good())
+    {
+        cerr << "Error: only " << ofs.tellp() << " bytes could be written to " << output_file << endl;
+        return 1;
+    }
+
+    return 0;
+}
+
 int main(int argc, char* argv[])
 {
     try
@@ -95,14 +138,13 @@ int main(int argc, char* argv[])
         }
         else
         {
-            // TODO:
-            // decompress_file(argv[2], argv[3]);
+            return decompress_file(argv[2], argv[3]);
         }
 
     }
     catch (const std::exception& e)
     {
-        cerr << e.what() << '\n';
+        cerr << "Error: " << e.what() << '\n';
         return 1;
     }
 
