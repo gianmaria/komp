@@ -34,12 +34,11 @@ int compress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-
     auto input_file_size = fs::file_size(input_file);
 
-    vector<char> buffer(input_file_size);
+    vector<char> input_file_content(input_file_size);
 
-    ifs.read(buffer.data(), buffer.size());
+    ifs.read(input_file_content.data(), input_file_content.size());
 
     if (not ifs.good())
     {
@@ -49,7 +48,7 @@ int compress_file(const string& input_file, const string& output_file)
 
     cout << "compressing " << input_file << " to " << output_file << endl;
 
-    auto compressed = WinCppCrypt::Util::compress(buffer.data(), buffer.size());
+    auto compressed = WinCppCrypt::Util::compress(input_file_content.data(), input_file_content.size());
 
     ofs.write(reinterpret_cast<char*>(compressed.data()), compressed.size());
 
@@ -59,10 +58,10 @@ int compress_file(const string& input_file, const string& output_file)
         return 1;
     }
 
-    cout << "original size  : " << buffer.size() << " bytes" << endl;
+    cout << "original size  : " << input_file_content.size() << " bytes" << endl;
     cout << "compressed size: " << compressed.size() << " bytes" << endl;
     float c = compressed.size();
-    float d = buffer.size();
+    float d = input_file_content.size();
     float saved = (d - c) / d * 100;
     cout << "saved: " << saved << "%" << endl;
 
@@ -87,9 +86,9 @@ int decompress_file(const string& input_file, const string& output_file)
 
     auto input_file_size = fs::file_size(input_file);
 
-    vector<char> buffer(input_file_size);
+    vector<char> compressed_file_content(input_file_size);
 
-    ifs.read(buffer.data(), buffer.size());
+    ifs.read(compressed_file_content.data(), compressed_file_content.size());
 
     if (not ifs.good())
     {
@@ -99,7 +98,7 @@ int decompress_file(const string& input_file, const string& output_file)
 
     cout << "decompressing " << input_file << " to " << output_file << endl;
 
-    auto decompressed = WinCppCrypt::Util::decompress(buffer.data(), buffer.size());
+    auto decompressed = WinCppCrypt::Util::decompress(compressed_file_content.data(), compressed_file_content.size());
 
     ofs.write(reinterpret_cast<char*>(decompressed.data()), decompressed.size());
 
@@ -108,6 +107,8 @@ int decompress_file(const string& input_file, const string& output_file)
         cerr << "Error: only " << ofs.tellp() << " bytes could be written to " << output_file << endl;
         return 1;
     }
+
+    cout << "done" << endl;
 
     return 0;
 }
